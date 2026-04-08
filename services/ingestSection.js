@@ -1,30 +1,32 @@
-const Reading = require('../models/reading');
-const Section = require('../models/section');
-const { evaluateSection } = require('./evaluateSection');
-const axios = require('axios');
+////////////////////////////not in use///////////////////////////////////////
 
-const ingestingNow = new Set();
+// const Reading = require('../models/reading');
+// const Section = require('../models/section');
+// const { evaluateSection } = require('./evaluateSection');
+// const axios = require('axios');
 
-async function ingestSection(sectionId) {
-  if (ingestingNow.has(sectionId.toString())) return;
-  ingestingNow.add(sectionId.toString());
+// const ingestingNow = new Set();
 
-  try {
-    const response = await axios.get(`${process.env.RPI_URL}/latest`);
-    const data = await response.data;
+// async function ingestSection(sectionId) {
+//   if (ingestingNow.has(sectionId.toString())) return;
+//   ingestingNow.add(sectionId.toString());
 
-    await Reading.create({ sectionId, ...data });
-    await evaluateSection(sectionId, data);
-  } catch (err) {
-    console.error(`Ingestion failed for ${sectionId}: ${error.message}`);
-  } finally {
-    ingestingNow.delete(sectionId.toString());
-  }
-}
+//   try {
+//     const response = await axios.get(`${process.env.RPI_URL}/latest`);
+//     const data = await response.data;
 
-async function ingestAllSections() {
-  const sections = await Section.find();
-  await Promise.all(sections.map((s) => ingestSection(s._id)));
-}
+//     await Reading.create({ sectionId, ...data });
+//     await evaluateSection(sectionId, data);
+//   } catch (err) {
+//     console.error(`Ingestion failed for ${sectionId}: ${error.message}`);
+//   } finally {
+//     ingestingNow.delete(sectionId.toString());
+//   }
+// }
 
-module.exports = { ingestSection, ingestAllSections };
+// async function ingestAllSections() {
+//   const sections = await Section.find();
+//   await Promise.all(sections.map((s) => ingestSection(s._id)));
+// }
+
+// module.exports = { ingestSection, ingestAllSections };

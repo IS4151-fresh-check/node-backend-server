@@ -1,21 +1,11 @@
-const Section = require("../models/section");
-const Alert = require("../models/alert");
+const Section = require('../models/section');
+const Alert = require('../models/alert');
 
-const evaluateSection = async (sectionId, data) => {
-  //await updateSection(sectionId, data);
+const generateAlerts = async (sectionId, data) => {
   await checkEnvironmentAlerts(sectionId, data);
   await checkRipenessAlerts(sectionId, data, discrepancy);
 };
 
-const updateSection = async (sectionId, data) => {
-  const discount = calculateDiscount(data);
-
-  await Section.findByIdAndUpdate(sectionId, {
-    currentStage: data.cvStage,
-    remainingShelfLife: data.remainingShelfLife,
-    discountPercentage: discount,
-  });
-};
 const now = new Date();
 const COOLDOWN = 15 * 60 * 1000;
 const COOLDOWN2 = 12 * 60 * 60 * 1000;
@@ -33,9 +23,9 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
     if (!existingTempAlert || now > new Date(existingTempAlert) > COOLDOWN) {
       await createAlert({
         sectionId,
-        title: "Adjust Temperature",
+        title: 'Adjust Temperature',
         message: `Temperature ${data.temperature}°C is out of optimal range (${TEMP_MIN}–${TEMP_MAX}°C)`,
-        type: "Warning",
+        type: 'Warning',
       });
       section.tempAlert = now;
       await section.save();
@@ -46,9 +36,9 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
     if (!existingHumAlert || now > new Date(existingHumAlert) > COOLDOWN) {
       await createAlert({
         sectionId,
-        title: "Adjust Humidity",
+        title: 'Adjust Humidity',
         message: `Humidity ${data.humidity}% is out of optimal range (${HUM_MIN}–${HUM_MAX}%)`,
-        type: "Warning",
+        type: 'Warning',
       });
       section.humAlert = now;
       await section.save();
@@ -59,30 +49,32 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
 const checkRipenessAlerts = async (sectionId, data) => {
   const section = await Section.findById(sectionId);
 
-  if (data.cvStage === "spoiled") {
+  if (data.cvStage === 'spoiled') {
     const existingDisposeAlert = section.disposeAlert;
     if (
-      !existingDisposeAlert || now > new Date(existingDisposeAlert) > COOLDOWN
+      !existingDisposeAlert ||
+      now > new Date(existingDisposeAlert) > COOLDOWN
     ) {
       await createAlert({
         sectionId,
-        title: "Spoiled",
+        title: 'Spoiled',
         message: `Dispose immediately`,
-        type: "Critical",
+        type: 'Critical',
       });
       section.disposeAlert = now;
       await section.save();
     }
-  } else if (data.cvStage === "overripe") {
+  } else if (data.cvStage === 'overripe') {
     const existingDiscountAlert = section.discountAlert;
     if (
-      !existingDiscountAlert || now > new Date(existingDiscountAlert) > COOLDOWN2
+      !existingDiscountAlert ||
+      now > new Date(existingDiscountAlert) > COOLDOWN2
     ) {
       await createAlert({
         sectionId,
-        title: "Overripe",
+        title: 'Overripe',
         message: `Apply discount`,
-        type: "Info",
+        type: 'Info',
       });
       section.discountAlert = now;
       await section.save();
@@ -94,31 +86,14 @@ const createAlert = async (data) => {
   try {
     const newAlert = await Alert.create({
       ...data,
-      status: "active",
+      status: 'active',
     });
 
     res.status(201).json(newAlert);
   } catch (err) {
-    console.error("Alert Creation Error:", err);
+    console.error('Alert Creation Error:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
-const calculateDiscount = (data) => {
-  if (data.cvStage === "overripe") {
-    switch (Math.floor(daysLeft)) {
-      case 3:
-        return 20;
-      case 2:
-        return 40;
-      case 1:
-        return 70;
-      case 0:
-        return 90;
-      default:
-        return 0;
-    }
-  }
-};
-
-module.exports = { evaluateSection };
+module.exports = { generateAlerts };

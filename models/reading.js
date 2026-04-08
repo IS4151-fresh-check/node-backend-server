@@ -13,6 +13,7 @@ const ReadingSchema = new mongoose.Schema(
 
     remainingShelfLife: { type: Number, required: true }, // Days
     ppm: { type: Number, required: true },
+    ppmSlope: { type: Number, required: true },
     gasStage: {
       type: String,
       enum: ['fresh', 'ripe', 'overripe', 'spoiled'],
@@ -28,6 +29,8 @@ const ReadingSchema = new mongoose.Schema(
     },
     cvConfidence: { type: Number, required: true, min: 0, max: 1 },
     imageBase64: { type: String, required: true },
+
+    createdAt: { type: Date, expires: '3d' }, //auto remove readings after 3 days
   },
   { timestamps: true },
 );

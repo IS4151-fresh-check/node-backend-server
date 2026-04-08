@@ -18,7 +18,7 @@ const SectionSchema = new mongoose.Schema(
     remainingShelfLife: {
       type: Number,
     },
-    ethylenePpm: { type: Number },
+    ppm: { type: Number },
     humidity: { type: Number },
     temperature: { type: Number },
     currentStage: {
@@ -33,10 +33,10 @@ const SectionSchema = new mongoose.Schema(
       default: 0,
     },
     imageBase64: { type: String },
-    tempAlert:{ type: Date},
-    humAlert:{ type: Date},
-    discountAlert:{ type: Date},
-    disposeAlert:{ type: Date},
+    tempAlert: { type: Date },
+    humAlert: { type: Date },
+    discountAlert: { type: Date },
+    disposeAlert: { type: Date },
   },
   { timestamps: true },
 );

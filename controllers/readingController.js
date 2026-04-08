@@ -28,5 +28,5 @@ const createReading = async (req, res) => {
 
 module.exports = {
   createReading,
-  createAlert,
+  //createAlert,
 };

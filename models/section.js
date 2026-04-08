@@ -33,6 +33,10 @@ const SectionSchema = new mongoose.Schema(
       default: 0,
     },
     imageBase64: { type: String },
+    tempAlert:{ type: Date},
+    humAlert:{ type: Date},
+    discountAlert:{ type: Date},
+    disposeAlert:{ type: Date},
   },
   { timestamps: true },
 );

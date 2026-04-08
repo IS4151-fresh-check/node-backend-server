@@ -1,6 +1,6 @@
 const Reading = require('../models/reading');
 const Section = require('../models/section');
-const { evaluateSection } = require('./evaluateService');
+const { evaluateSection } = require('./evaluateSection');
 const axios = require('axios');
 
 const ingestingNow = new Set();

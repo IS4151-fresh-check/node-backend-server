@@ -2,7 +2,8 @@ const Section = require('../models/section');
 const {
   ingestSection,
   ingestAllSections,
-} = require('../services/ingestService');
+} = require('../services/ingestSection');
+const { evaluateSection } = require('../services/evaluateSection');
 
 const createSection = async (req, res) => {
   try {
@@ -35,12 +36,17 @@ const getSectionById = async (req, res) => {
         .status(404)
         .json({ message: `Section with id ${sectionId} not found` });
     }
-
+    await evaluateSection(sectionId, data);
     res.status(200).json(section);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+const getReadings = async(req, res)=>{
+  //ingestAllSections
+
+}
 
 // const refreshOne = async (req, res) => {
 //   try {

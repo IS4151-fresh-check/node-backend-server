@@ -33,6 +33,12 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
     } else {
       console.log('cooldown not over for temperature alert');
     }
+  }else{
+    const existingTempAlert = section.tempAlert;
+    if(existingTempAlert){
+      section.tempAlert = null;
+      await section.save();
+    }
   }
   if (data.humidity < HUM_MIN || data.humidity > HUM_MAX) {
     const existingHumAlert = section.humAlert;
@@ -48,6 +54,12 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
       console.log('new humidity alert created');
     } else {
       console.log('cooldown not over for humidity alert');
+    }
+  }else{
+    const existingHumAlert = section.humAlert;
+    if(existingHumAlert){
+      section.humAlert = null;
+      await section.save();
     }
   }
 };
@@ -73,7 +85,15 @@ const checkRipenessAlerts = async (sectionId, data) => {
     } else {
       console.log('cooldown not over for spoil alert');
     }
-  } else if (data.currentStage === 'overripe' || data.currentStage === 'ripe') {
+  }else{
+    const existingDisposeAlert = section.disposeAlert;
+    if(existingDisposeAlert){
+      section.disposeAlert = null;
+      await section.save();
+    }
+  }
+  
+  if (data.currentStage === 'overripe' || data.currentStage === 'ripe') {
     const existingDiscountAlert = section.discountAlert;
     if (
       !existingDiscountAlert ||
@@ -90,6 +110,12 @@ const checkRipenessAlerts = async (sectionId, data) => {
       console.log('new discount alert created');
     } else {
       console.log('cooldown not over for discount alert');
+    }
+  }else{
+    const existingDiscountAlert = section.discountAlert;
+    if(existingDiscountAlert){
+      section.discountAlert = null;
+      await section.save();
     }
   }
 };

@@ -1,9 +1,10 @@
 const Reading = require('../models/reading');
 const Section = require('../models/section');
 const {
-  calculateShelfLife,
+  calculateDaysToNextStage,
   calculateDiscount,
 } = require('../services/calculationService');
+const { generateAlerts } = require('../services/alertsService');
 
 const processReading = async (req, res) => {
   const {
@@ -22,7 +23,7 @@ const processReading = async (req, res) => {
 
   try {
     //check if section ID exists
-    const sectionExists = await await Section.exists({ _id: sectionId });
+    const sectionExists = await Section.exists({ _id: sectionId });
     if (!sectionExists) {
       return res.status(404).json({
         error: `Unable to save reading. Section ID ${sectionId} does not exist!`,
@@ -33,27 +34,37 @@ const processReading = async (req, res) => {
     const newReading = await Reading.create({
       ...req.body,
     });
-    res.status(201).json('New reading saved: ', newReading);
 
     //calculations
-    const remainingShelfLife = await calculateShelfLife(ppm, ppmSlope);
-    const discount = await calculateDiscount(cvStage, remainingShelfLife);
+    const daysToNextStage = await calculateDaysToNextStage(ppm, ppmSlope);
+    const discountPercentage = await calculateDiscount(
+      cvStage,
+      daysToNextStage,
+    );
 
     //update relevant values in corresponding Section
     const updatedSection = await Section.findByIdAndUpdate(
       sectionId,
       {
-        remainingShelfLife: remainingShelfLife,
+        daysToNextStage: daysToNextStage,
         ppm: ppm,
         humidity: humidity,
         temperature: temperature,
         currentStage: cvStage,
-        discountPercentage: discount,
+        discountPercentage: discountPercentage,
         imageBase64: imageBase64,
       },
       { returnDocument: 'after' },
     );
-    res.json({ message: 'Corresponding section updated!', updatedSection });
+
+    //generate alerts if needed
+    await generateAlerts(sectionId, updatedSection);
+
+    res.status(201).json({
+      message: 'Data processed successfully',
+      reading: newReading,
+      section: updatedSection,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

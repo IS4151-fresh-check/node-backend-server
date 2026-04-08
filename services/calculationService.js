@@ -5,7 +5,7 @@ const RIPENESS_THRESHOLDS = {
   OVERRIPE_TO_SPOILED: 5000,
 };
 
-const calculateShelfLife = async (ppm, ppmSlope) => {
+const calculateDaysToNextStage = async (ppm, ppmSlope) => {
   if (ppmSlope <= 0) return null;
 
   if (ppm < RIPENESS_THRESHOLDS.FRESH_TO_RIPE) {
@@ -24,24 +24,20 @@ const calculateShelfLife = async (ppm, ppmSlope) => {
   return Math.max(0, parseFloat(daysRemaining.toFixed(1)));
 };
 
-const calculateDiscount = async (cvStage, remainingShelfLife) => {
-  if (cvStage === 'overripe') {
-    switch (Math.floor(remainingShelfLife)) {
-      case 3:
-        return 20;
-      case 2:
-        return 40;
-      case 1:
-        return 70;
-      case 0:
-        return 90;
-      default:
-        return 0;
-    }
+const calculateDiscount = async (currentStage, daysToNextStage) => {
+  let remaining = daysToNextStage;
+  remaining = Math.max(remaining, 1);
+  let discount = 0;
+
+  if (currentStage === 'ripe') {
+    discount = 5 + (1 / remaining) * 10;
+  } else if (currentStage == 'overripe') {
+    discount = 20 + (1 / remaining) * 20;
   }
+  return Math.round(discount * 100) / 100;
 };
 
 module.exports = {
   calculateDiscount,
-  calculateShelfLife,
+  calculateDaysToNextStage,
 };

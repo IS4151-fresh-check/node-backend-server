@@ -11,7 +11,6 @@ const ReadingSchema = new mongoose.Schema(
     humidity: { type: Number, required: true },
     temperature: { type: Number, required: true },
 
-    remainingShelfLife: { type: Number, required: true }, // Days
     ppm: { type: Number, required: true },
     ppmSlope: { type: Number, required: true },
     gasStage: {

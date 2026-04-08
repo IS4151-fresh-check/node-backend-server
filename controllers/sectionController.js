@@ -3,7 +3,6 @@ const Section = require('../models/section');
 //   ingestSection,
 //   ingestAllSections,
 // } = require('../services/ingestSection');
-const { generateAlerts } = require('../services/alertsService');
 
 const createSection = async (req, res) => {
   try {
@@ -36,7 +35,6 @@ const getSectionById = async (req, res) => {
         .status(404)
         .json({ message: `Section with id ${sectionId} not found` });
     }
-    await generateAlerts(sectionId, section);
     res.status(200).json(section);
   } catch (err) {
     res.status(500).json({ error: err.message });

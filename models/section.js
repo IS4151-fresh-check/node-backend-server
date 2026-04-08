@@ -15,7 +15,7 @@ const SectionSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    remainingShelfLife: {
+    daysToNextStage: {
       type: Number,
     },
     ppm: { type: Number },

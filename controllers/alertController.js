@@ -14,12 +14,19 @@ const getActiveAlerts = async (req, res) => {
 const resolveAlert = async (req, res) => {
   const { alertId } = req.params;
   try {
-    const alert = await Alert.findByIdAndUpdate(
+    const updatedAlert = await Alert.findByIdAndUpdate(
       alertId,
       { status: 'resolved' },
       { returnDocument: 'after' },
     );
-    res.json({ message: 'Alert resolved', alert });
+
+    if (!updatedAlert) {
+      return res.status(404).json({
+        error: `Not Found: No alert found with ID ${alertId}`,
+      });
+    }
+
+    res.json({ message: 'Alert resolved', alert: updatedAlert });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

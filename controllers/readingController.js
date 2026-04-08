@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Reading = require('../models/reading');
 const Section = require('../models/section');
 const {
@@ -70,6 +71,46 @@ const processReading = async (req, res) => {
   }
 };
 
+/** List recent readings; optional ?sectionId= (Mongo ObjectId) and ?limit= (1–100). */
+const getReadings = async (req, res) => {
+  try {
+    const { sectionId } = req.query;
+    const rawLimit = req.query.limit;
+    let limit = 50;
+    if (rawLimit !== undefined && rawLimit !== '') {
+      const n = Number.parseInt(String(rawLimit), 10);
+      if (!Number.isFinite(n)) {
+        return res.status(400).json({ error: 'Invalid limit' });
+      }
+      limit = Math.min(100, Math.max(1, n));
+    }
+
+    const filter = {};
+    if (sectionId !== undefined && sectionId !== '') {
+      if (!mongoose.Types.ObjectId.isValid(String(sectionId))) {
+        return res.status(400).json({ error: 'Invalid sectionId' });
+      }
+      filter.sectionId = sectionId;
+    }
+
+    const readings = await Reading.find(filter)
+      .select('-imageBase64')
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+    res.json(
+      readings.map((r) => ({
+        ...r,
+        _id: String(r._id),
+        sectionId: String(r.sectionId),
+      })),
+    );
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   processReading,
+  getReadings,
 };

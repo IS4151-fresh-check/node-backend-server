@@ -17,6 +17,9 @@ router.patch('/alert/:alertId', alertController.resolveAlert);
 // - generate alerts if needed
 router.post('/save', readingController.processReading);
 
+//called by frontend to show recent sensor / model readings (optional ?sectionId=&limit=)
+router.get('/reading', readingController.getReadings);
+
 // router.post('/section/refresh', sectionController.refreshAll);
 // router.post('/section/:sectionId/refresh', sectionController.refreshOne);
 

@@ -43,9 +43,7 @@ const getSectionById = async (req, res) => {
     });
   }
   try {
-    const section = await Section.findById(sectionId)
-      .select('-imageBase64')
-      .lean();
+    const section = await Section.findById(sectionId).lean();
     if (!section) {
       return res
         .status(404)

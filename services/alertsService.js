@@ -38,6 +38,12 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
     if(existingTempAlert){
       section.tempAlert = null;
       await section.save();
+      await createAlert({
+        sectionId,
+        title: `Temperature back to normal`,
+        message: `Temperature ${data.temperature}°C for ${data.name} is back to the normal range.`,
+        type: 'info',
+      });
     }
   }
   if (data.humidity < HUM_MIN || data.humidity > HUM_MAX) {
@@ -60,6 +66,12 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
     if(existingHumAlert){
       section.humAlert = null;
       await section.save();
+      await createAlert({
+        sectionId,
+        title: `Humidity back to normal`,
+        message: `Humidity ${data.humidity}% for ${data.name} is back to the normal range.`,
+        type: 'info',
+      });
     }
   }
 };
@@ -90,6 +102,12 @@ const checkRipenessAlerts = async (sectionId, data) => {
     if(existingDisposeAlert){
       section.disposeAlert = null;
       await section.save();
+      await createAlert({
+        sectionId,
+        title: `Spoiled bananas disposed`,
+        message: `Spoiled bananas at ${data.name} have been disposed.`,
+        type: 'info',
+      });
     }
   }
   

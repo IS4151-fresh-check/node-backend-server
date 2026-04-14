@@ -7,6 +7,7 @@ const getActiveAlerts = async (req, res) => {
     const alerts = await Alert.find({ status: { $eq: 'active' } })
       .populate('sectionId', 'name location')
       .sort({ createdAt: -1, _id: -1 })
+      .limit(20)
       .lean();
     res.json(alerts);
   } catch (err) {

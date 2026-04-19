@@ -37,9 +37,13 @@ const processReading = async (req, res) => {
     });
 
     //calculations
-    const daysToNextStage = await calculateDaysToNextStage(ppm, ppmSlope);
+    const daysToNextStage = await calculateDaysToNextStage(
+      ppm,
+      ppmSlope,
+      gasStage,
+    );
     const discountPercentage = await calculateDiscount(
-      cvStage,
+      gasStage,
       daysToNextStage,
     );
 
@@ -51,7 +55,7 @@ const processReading = async (req, res) => {
         ppm: ppm,
         humidity: humidity,
         temperature: temperature,
-        currentStage: cvStage,
+        currentStage: gasStage,
         discountPercentage: discountPercentage,
         imageBase64: imageBase64,
       },

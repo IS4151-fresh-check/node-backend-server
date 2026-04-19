@@ -1,27 +1,37 @@
 //may change according to new dataset
 const RIPENESS_THRESHOLDS = {
-  FRESH_TO_RIPE: 500,
-  RIPE_TO_OVERRIPE: 2000,
-  OVERRIPE_TO_SPOILED: 5000,
+  FRESH_TO_RIPE: 10,
+  RIPE_TO_OVERRIPE: 17000,
+  OVERRIPE_TO_SPOILED: 22000,
 };
 
-const calculateDaysToNextStage = async (ppm, ppmSlope) => {
-  if (ppmSlope <= 0) return null;
-
-  if (ppm < RIPENESS_THRESHOLDS.FRESH_TO_RIPE) {
-    nextThreshold = RIPENESS_THRESHOLDS.FRESH_TO_RIPE;
-  } else if (ppm < RIPENESS_THRESHOLDS.RIPE_TO_OVERRIPE) {
-    nextThreshold = RIPENESS_THRESHOLDS.RIPE_TO_OVERRIPE;
-  } else if (ppm < RIPENESS_THRESHOLDS.OVERRIPE_TO_SPOILED) {
-    nextThreshold = RIPENESS_THRESHOLDS.OVERRIPE_TO_SPOILED;
-  } else {
+const calculateDaysToNextStage = async (ppm, ppmSlope, gasStage) => {
+  if (gasStage == 'fresh') {
+    return 9;
+  } else if (gasStage == 'ripe') {
+    return 3;
+  } else if (gasStage == 'overripe') {
+    return 1;
+  } else if (gasStage == 'spoiled') {
     return 0;
   }
 
-  const hoursRemaining = (nextThreshold - ppm) / ppmSlope;
-  const daysRemaining = hoursRemaining / 24;
+  // if (ppmSlope <= 0) return null;
 
-  return Math.max(0, parseFloat(daysRemaining.toFixed(1)));
+  // if (ppm < RIPENESS_THRESHOLDS.FRESH_TO_RIPE) {
+  //   nextThreshold = RIPENESS_THRESHOLDS.FRESH_TO_RIPE;
+  // } else if (ppm < RIPENESS_THRESHOLDS.RIPE_TO_OVERRIPE) {
+  //   nextThreshold = RIPENESS_THRESHOLDS.RIPE_TO_OVERRIPE;
+  // } else if (ppm < RIPENESS_THRESHOLDS.OVERRIPE_TO_SPOILED) {
+  //   nextThreshold = RIPENESS_THRESHOLDS.OVERRIPE_TO_SPOILED;
+  // } else {
+  //   return 0;
+  // }
+
+  // const hoursRemaining = (nextThreshold - ppm) / ppmSlope;
+  // const daysRemaining = hoursRemaining / 24;
+
+  // return Math.max(0, parseFloat(daysRemaining.toFixed(1)));
 };
 
 const calculateDiscount = async (currentStage, daysToNextStage) => {

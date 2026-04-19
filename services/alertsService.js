@@ -12,9 +12,9 @@ const COOLDOWN2 = 12 * 60 * 60 * 1000;
 
 const checkEnvironmentAlerts = async (sectionId, data) => {
   const TEMP_MIN = 13.5,
-    TEMP_MAX = 20;
-  const HUM_MIN = 85,
-    HUM_MAX = 95;
+    TEMP_MAX = 38;
+  const HUM_MIN = 50,
+    HUM_MAX = 85;
 
   const section = await Section.findById(sectionId);
 
@@ -33,9 +33,9 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
     } else {
       console.log('cooldown not over for temperature alert');
     }
-  }else{
+  } else {
     const existingTempAlert = section.tempAlert;
-    if(existingTempAlert){
+    if (existingTempAlert) {
       section.tempAlert = null;
       await section.save();
       await createAlert({
@@ -61,9 +61,9 @@ const checkEnvironmentAlerts = async (sectionId, data) => {
     } else {
       console.log('cooldown not over for humidity alert');
     }
-  }else{
+  } else {
     const existingHumAlert = section.humAlert;
-    if(existingHumAlert){
+    if (existingHumAlert) {
       section.humAlert = null;
       await section.save();
       await createAlert({
@@ -97,9 +97,9 @@ const checkRipenessAlerts = async (sectionId, data) => {
     } else {
       console.log('cooldown not over for spoil alert');
     }
-  }else{
+  } else {
     const existingDisposeAlert = section.disposeAlert;
-    if(existingDisposeAlert){
+    if (existingDisposeAlert) {
       section.disposeAlert = null;
       await section.save();
       await createAlert({
@@ -110,7 +110,7 @@ const checkRipenessAlerts = async (sectionId, data) => {
       });
     }
   }
-  
+
   if (data.currentStage === 'overripe' || data.currentStage === 'ripe') {
     const existingDiscountAlert = section.discountAlert;
     if (
@@ -129,9 +129,9 @@ const checkRipenessAlerts = async (sectionId, data) => {
     } else {
       console.log('cooldown not over for discount alert');
     }
-  }else{
+  } else {
     const existingDiscountAlert = section.discountAlert;
-    if(existingDiscountAlert){
+    if (existingDiscountAlert) {
       section.discountAlert = null;
       await section.save();
     }
